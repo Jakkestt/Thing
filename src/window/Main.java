@@ -1,9 +1,11 @@
 package window;
 
 import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
+import org.joml.*;
+
+import org.lwjgl.opengl.GL;
 
 public class Main {
     
@@ -12,18 +14,23 @@ public class Main {
             throw new IllegalStateException("Unable To Initialize GLFW");
         }
         
-        long win = glfwCreateWindow(1200, 900, "Hello World!", NULL, NULL);
-        if (win == NULL) {
-            glfwTerminate();
-            throw new RuntimeException("Failed To Create The GLFW Window");
-        }
+        Window win = new Window();
+        win.setSize(1200, 900);
+        win.createWindow("Game");
         
-        glfwMakeContextCurrent(win);
         GL.createCapabilities();
+        
+        Camera camera = new Camera(640, 480);
         
         glEnable(GL_TEXTURE_2D);
         
         Texture tex = new Texture("something.png");
+        
+        Matrix4f scale = new Matrix4f()
+        		.translate(new Vector3f(100, 0, 0))
+        		.scale(128);
+        
+        Matrix4f target = new Matrix4f();
         
         glClearColor(0, 0, 0, 1);
         
@@ -63,31 +70,18 @@ public class Main {
         
         Shader shader = new Shader("shader");
         
-        while (!glfwWindowShouldClose(win)) {
+        while (!win.shouldClose()) {
+        	target = scale;
+        	
             double time = glfwGetTime();
             glfwPollEvents();
-            
-            if(glfwGetKey(win, GLFW_KEY_D) == GL_TRUE) {
-            	angle -= 0.01;
-            	}
-            
-            if(glfwGetKey(win, GLFW_KEY_A) == GL_TRUE) {
-            	angle += 0.01;
-            }
-            
-            if(glfwGetKey(win, GLFW_KEY_W) == GL_TRUE) {
-            	y += 0.01;
-            }
-            
-            if(glfwGetKey(win, GLFW_KEY_S) == GL_TRUE) {
-            	y -= 0.01;
-            }
             
             glClear(GL_COLOR_BUFFER_BIT);
             
             tex.bind(0);
             shader.bind();
             shader.setUniform("sampler", 0);
+            shader.setUniform("projection", camera.getProjection().mul(target));
             
             model.render();
             
@@ -95,16 +89,11 @@ public class Main {
 
             glLoadIdentity();
             glTranslatef(-x, -y, 0.0f);
+
+            camera.setPosition(new Vector3f(-100 + x, 0 - y, 0));
             
-            glfwSwapBuffers(win);
-            
-            if(glfwGetKey(win, GLFW_KEY_ESCAPE) == GL_TRUE) {
-                glfwSetWindowShouldClose(win, true);
-            }
+            win.swapBuffers();
         }
-        
-        glfwDestroyWindow(win);
-        glfwTerminate();
     }
     
     public static void main(String[] args) {
