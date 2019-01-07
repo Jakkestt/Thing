@@ -12,7 +12,7 @@ public class Main {
             throw new IllegalStateException("Unable To Initialize GLFW");
         }
         
-        long win = glfwCreateWindow(800, 600, "Hello World!", NULL, NULL);
+        long win = glfwCreateWindow(1200, 900, "Hello World!", NULL, NULL);
         if (win == NULL) {
             glfwTerminate();
             throw new RuntimeException("Failed To Create The GLFW Window");
@@ -23,7 +23,7 @@ public class Main {
         
         glEnable(GL_TEXTURE_2D);
         
-        //Texture tex = new Texture("something.png");
+        Texture tex = new Texture("something.png");
         
         glClearColor(0, 0, 0, 1);
         
@@ -85,8 +85,10 @@ public class Main {
             
             glClear(GL_COLOR_BUFFER_BIT);
             
-            //tex.bind();
+            tex.bind(0);
             shader.bind();
+            shader.setUniform("sampler", 0);
+            
             model.render();
             
             square.render();
