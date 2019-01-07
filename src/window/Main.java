@@ -16,11 +16,12 @@ public class Main {
         
         Window win = new Window();
         win.setSize(1200, 900);
+        win.setFullscreen(false);
         win.createWindow("Game");
         
         GL.createCapabilities();
         
-        Camera camera = new Camera(640, 480);
+        Camera camera = new Camera(win.getWidth(), win.getHeight());
         
         glEnable(GL_TEXTURE_2D);
         
@@ -72,6 +73,31 @@ public class Main {
         
         while (!win.shouldClose()) {
         	target = scale;
+        	if(glfwGetKey(win.getWindow(), GLFW_KEY_ESCAPE) == GL_TRUE) {
+        		glfwSetWindowShouldClose(win.getWindow(), true);
+        	}
+        	
+        	if(glfwGetKey(win.getWindow(), GLFW_KEY_0) == GL_TRUE) {
+        		win.setFullscreen(false);
+        	}
+        	
+        	if(glfwGetKey(win.getWindow(), GLFW_KEY_W) == GL_TRUE) {
+        		y += 1;
+        	}
+        	
+        	if(glfwGetKey(win.getWindow(), GLFW_KEY_S) == GL_TRUE) {
+        		y -= 1;
+        	}
+        	
+        	if(glfwGetKey(win.getWindow(), GLFW_KEY_A) == GL_TRUE) {
+        		x += 1;
+        	}
+        	
+        	if(glfwGetKey(win.getWindow(), GLFW_KEY_D) == GL_TRUE) {
+        		x -= 1;
+        	}
+        	
+        	
         	
             double time = glfwGetTime();
             glfwPollEvents();
@@ -87,10 +113,7 @@ public class Main {
             
             square.render();
 
-            glLoadIdentity();
-            glTranslatef(-x, -y, 0.0f);
-
-            camera.setPosition(new Vector3f(-100 + x, 0 - y, 0));
+            camera.setPosition(new Vector3f(0 + x, 0 - y, 0));
             
             win.swapBuffers();
         }
