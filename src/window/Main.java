@@ -39,39 +39,32 @@ public class Main {
         float y = 0;
         float angle = 0;
         
-        float[] vertices = new float[] {
-        		-0.5f, 0.5f, 0,	//TOP LEFT     0
-        		0.5f, 0.5f, 0, 	//TOP RIGHT    1
-        		0.5f, -0.5f, 0, //BOTTOM RIGHT 2
-        		-0.5f, -0.5f, 0,//BOTTOM LEFT  3
-        };
         
-        float[] texture = new float[] {
-        		0,0,
-        		1,0,
-        		1,1,
-        		0,1,
-        };
-        
-        int[] indices = new int[] {
-        		0,1,2,
-        		2,3,0
-        };
-        
-        float[] coords = new float[] {
-        		0.5f, 1.0f, 0,
-        		1.0f, 1.0f, 0,
-        		1.0f, 0.5f, 0,
-        		0.5f, 0.5f, 0,
-        };
-        
-        Model model = new Model(vertices, texture, indices);
-        
-        Model square = new Model(coords, texture, indices);
         
         Shader shader = new Shader("shader");
         
         while (!win.shouldClose()) {
+        	float[] vertices = new float[] {
+            		-0.5f + x, 0.5f - x, 0,	//TOP LEFT     0
+            		0.5f + x, 0.5f - x, 0, 	//TOP RIGHT    1
+            		0.5f - x, -0.5f + x, 0, //BOTTOM RIGHT 2
+            		-0.5f - x, -0.5f + x, 0,//BOTTOM LEFT  3
+            };
+            
+            float[] texture = new float[] {
+            		0,0,
+            		1,0,
+            		1,1,
+            		0,1,
+            };
+            
+            int[] indices = new int[] {
+            		0,1,2,
+            		2,3,0
+            };
+            
+            Model model = new Model(vertices, texture, indices);
+            
         	target = scale;
         	if(glfwGetKey(win.getWindow(), GLFW_KEY_ESCAPE) == GL_TRUE) {
         		glfwSetWindowShouldClose(win.getWindow(), true);
@@ -90,11 +83,11 @@ public class Main {
         	}
         	
         	if(glfwGetKey(win.getWindow(), GLFW_KEY_A) == GL_TRUE) {
-        		x += 1;
+        		x += 0.01;
         	}
         	
         	if(glfwGetKey(win.getWindow(), GLFW_KEY_D) == GL_TRUE) {
-        		x -= 1;
+        		x -= 0.01;
         	}
         	
         	
@@ -110,10 +103,8 @@ public class Main {
             shader.setUniform("projection", camera.getProjection().mul(target));
             
             model.render();
-            
-            square.render();
 
-            camera.setPosition(new Vector3f(0 + x, 0 - y, 0));
+            camera.setPosition(new Vector3f(0, 0, 0));
             
             win.swapBuffers();
         }
